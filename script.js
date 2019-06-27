@@ -1,99 +1,55 @@
-var count = 1;
-var element = document.getElementById('counter');
-function counter(ev) {
-    this.innerText = count;
-    count = count + 1;
-    console.log(ev)
-}
 
-element.onclick = counter
-document.getElementById("counter2").onclick = counter
+//Code here creates a canvas and adds it to the html via javascript
+var canvas = document.createElement("canvas");
+canvas.height = 800;
+canvas.width = 600;
+//document.body.appendChild(canvas);
 
-const vsSource = `
-    attribute vec4 aVertexPosition;
+//Part of the GlslCanvas library
+var sandbox = new GlslCanvas(canvas);
 
-    uniform mat4 uModelViewMatrix;
-    uniform mat4 uProjectionMatrix;
 
-    void main() {
-      gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;
-    }
-  `;
+var string_frag_code = `#ifdef GL_ES
+precision mediump float;
+#endif
 
-const fsSource = `
-    void main() {
-      gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
-    }
-  `;
+#define PI 3.14159265359
 
-//Initialize a shader program, so WebGL knows how to draw our data
+uniform vec2 u_resolution;
+uniform vec2 u_mouse;
+uniform float u_time; 
 
-function initShaderProgram(gl, vsSource, fsSource) {
+void main() {
 
-  const vertexShader = loadShader(gl, gl.VERTEX_SHADER, vsSource);
-  const fragmentShader = loadShader(gl, gl.FRAGMENT_SHADER, fsSource);
-  
-  //Create the shader program
-  const shaderProgram = gl.createProgram();
-  gl.attachShader(shaderProgram, vertexShader);
-  gl.attachShader(shaderProgram, fragmentShader);
-  gl.linkProgram(shaderProgram);
+    vec2 nc = gl_FragCoord.xy/u_resolution;
+    float c = pow(min(cos(PI * nc.x / 2.0), 1.0 - abs(nc.x)), 0.5);
+    //c = c + sin(u_time);
+    c = clamp(c, abs(sin(u_time)), abs(cos(u_time)));
+    float line = smoothstep(nc.y - 0.02, nc.y, c) - 
+    smoothstep(nc.y, nc.y + 0.02, c);
+    
+    vec3 green = vec3(0.302, 0.9216, 0.3529);
+    vec3 red = vec3(0.9, 0.0, 0.0);
 
-  // If creating the shader program failed, alert
+    //Old, Whole line is just one color, no changes
+    //vec3 color = line * vec3(0.302, 0.9216, 0.3529);
 
-  if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
-    alert("Unable to initialize the shader program: " + gl.getProgramInfoLog(shaderProgram));
-    return null;
-  }
+    //Old, whole line changes color equally along every pixel
+    //vec3 color = line * mix(green, red, abs(tan(u_time)));
 
-  return shaderProgram;
-}
+    //New with smoothstep so tthat color changes in an gradient way
+    vec3 color = line * mix(green, red, smoothstep(0.0, abs(tan(u_time)), nc.x));
 
-// creates a shader of the given type, uploads the source and compiles it.
-function loadShader(gl, type, source) {
+    gl_FragColor = vec4(color, 1.0);
+}`;
 
-  const shader = gl.createShader(type);
+//Load the shader into our GlslCanvas
+sandbox.load(string_frag_code);
 
-  // Send the source to the shader object
-  gl.shaderSource(shader, source);
-  // Compile the shader program
-  gl.compileShader(shader);
 
-  // See if it compiled successfully
-  if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-    alert('An error occurred compiling the shaders: ' + gl.getShaderInfoLog(shader));
-    gl.deleteShader(shader);
-    return null;
-  }
-
-  return shader;
-}
-
-function main() {
-
-  //const fsSource = `
-    //void main() {
-      //gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
-    //}
-  //`;
-
-  const canvas = document.querySelector("#glCanvas");
-  const gl = canvas.getContext("webgl");
-
-  if (gl === null) {
-    alert("Unable to intialize WebGL.")
-    return;
-  }
-
-  gl.clearColor(0.0, 0.0, 0.0, 1.0);
-  gl.clear(gl.COLOR_BUFFER_BIT);
-
-   const sp = initShaderProgram(gl, vsSource, fsSource);
-}
-
-main();
 
 /*
+
 var sun = new Image();
 var moon = new Image();
 var earth = new Image();

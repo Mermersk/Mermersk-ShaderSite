@@ -1,25 +1,268 @@
+
 <html>
-    <header>
-        <title>Weblaaaab!</title>
-    </header>
-    <body>
-        <div>
-            
-            <h1 id="h">Weblab</h1>
-            <p>Here is paragraph</p>
-            <p>Another</p>
-            <h6>subtitle</h6>
-        </div>
-        <a href="http://google.com">Good search engine!</a>
-        <p id="counter">Click me</p>
-        <p id="counter2" style="color:red">Click me</p>
+  <!-- HTML comments are defined like this! -->
+    <head>
+        <title></title>
 
-        <canvas id = "glCanvas" width = "640" height = "480"></canvas>
+        <style>
+        /* CSS comments are defined like this! 
+        Her in the style tag goes our CSS code. This is whats called an internal CSS because it is in the Head tag. It styles this whole html file but not others.
+        There also exists inline CSS, which is defined directly in each element(styles only that element) example: <h1 style="color:blue;">This is a Blue Heading</h1>
+        There also exists external CSS, which lies in its own file, it can style 1 or multiple HTML files at once.
+        */
+        @keyframes wordSpacingAnimation {
+          from {
+            word-spacing: 10px;
+          }
+
+          to {
+            word-spacing: 50px;
+          }
+        }
+
+        @keyframes letterSpacingAnimation {
+          from {
+            letter-spacing: 1px;
+          }
+          to {
+            letter-spacing: 10px;
+          }
+        }
+        /* Instead of from-to, we can use percentages, then we can have more than 2 colors!
+        0% is the beginning of the animation, while 100% is the end of the animation. */
+        @keyframes colorAnimation {
+          0% {
+            color: red;
+          }
+          50% {
+            color: blue;
+          }
+          100% {
+            color: green;
+          }
+        }
+
+        @keyframes jumpingLogo {
+          from {
+            padding-bottom: 0px;
+          }
+          to {
+            padding-bottom: 15px;
+          }
+        }
+
+        body {background-color:cornsilk;
+          max-width: 1100px;
+          margin: auto;
+          }
+
+        h1 {margin-top: 50px;
+          color: black;
+          font-size: 400%; 
+          text-align: center; 
+          font-family: Impact;
+          word-spacing: 10px;
+          animation-name: wordSpacingAnimation;
+          animation-duration: 1s;
+          animation-iteration-count: infinite;
+          animation-direction: alternate;
+          animation-timing-function: ease-out;
+          animation-delay: 0.75s;
+          animation-fill-mode: backwards;
+          
+          }
         
+        #obs {
+          animation-name: colorAnimation;
+          animation-duration: 1s;
+          animation-iteration-count: infinite;
+          animation-direction: alternate;
+        }
+
+        #middleWord {
+          animation-name: letterSpacingAnimation;
+          animation-duration: 1s;
+          animation-iteration-count: infinite;
+          animation-direction: alternate;
+          animation-timing-function: ease-out;
+          animation-delay: 0.75s;
+          animation-fill-mode: backwards;
+      
+        }
+
+        canvas {margin-top: 50px;
+        }
+
+        footer {
+          position: fixed;
+          bottom: 5px;
+          left: 5px;
+
+          border-bottom: ridge;
+          border-bottom-left-radius: 20px;
+          border-bottom-right-radius: 20px;
+          border-bottom-width: 15px;
+          border-color: rgba(48, 22, 163, 0.603);
+         
+        } 
+
+        img:hover {
+          animation-name: jumpingLogo;
+          animation-duration: 0.25s;
+          animation-direction: alternate;
+          animation-iteration-count: infinite;
+        }
+
+        ul {list-style: none}
+        li {list-style: none}
+
+        </style>
+        
+    </head>
+    <body>
+
+      <h1>Some <span id="middleWord">random</span> shaders<span id="obs">!</span></h1>
+
+      <ul>
+        
+        <li><canvas class="glslCanvas" data-fragment="
+        #ifdef GL_ES
+        precision mediump float;
+        #endif
+        
+        #define PI 3.14159265359
+        
+        uniform vec2 u_resolution;
+        uniform vec2 u_mouse;
+        uniform float u_time; 
+        
+        void main() {
+        
+            vec2 nc = gl_FragCoord.xy/u_resolution;
+            float c = pow(min(cos(PI * nc.x / 2.0), 1.0 - abs(nc.x)), 0.5);
+            //c = c + sin(u_time);
+            c = clamp(c, abs(sin(u_time)), abs(cos(u_time)));
+            float line = smoothstep(nc.y - 0.02, nc.y, c) - 
+            smoothstep(nc.y, nc.y + 0.02, c);
+            
+            vec3 green = vec3(0.302, 0.9216, 0.3529);
+            vec3 red = vec3(0.9, 0.0, 0.0);
+        
+            //Old, Whole line is just one color, no changes
+            //vec3 color = line * vec3(0.302, 0.9216, 0.3529);
+        
+            //Old, whole line changes color equally along every pixel
+            //vec3 color = line * mix(green, red, abs(tan(u_time)));
+        
+            //New with smoothstep so tthat color changes in an gradient way
+            vec3 color = line * mix(green, red, smoothstep(0.0, abs(tan(u_time)), nc.x));
+        
+            gl_FragColor = vec4(color, 1.0);
+        }" 
+        width="1000" height="800"></canvas></li>
+
+        <li><canvas class = "glslCanvas" data-fragment = "#ifdef GL_FRAGMENT_PRECISION_MEDIUM
+        precision highp float;
+        #else
+        precision mediump float;
+        #endif
+        
+        uniform vec2 u_resolution;
+        uniform float u_time;
+        
+        vec3 hsb2rgb( in vec3 c ){
+            vec3 rgb = clamp(abs(mod(c.x*6.0+vec3(0.0,4.0,2.0),
+                                     6.0)-3.0)-1.0,
+                             0.0,
+                             1.0 );
+            rgb = rgb*rgb*(3.0-2.0*rgb);
+            return c.z * mix(vec3(1.0), rgb, c.y);
+        }
+        
+        void main(void) {
+          vec2 uv = gl_FragCoord.xy / u_resolution.xy;
+          vec2 middle = u_resolution.xy/2.0;
+        
+          float x = gl_FragCoord.x;
+          float y = gl_FragCoord.y;
+          float dx = abs(middle.x - x);
+          float dy = abs(middle.y - y);
+        
+          float distance = sqrt(pow(dx, 2.0) +
+            pow(dy, 2.0));
+        
+          vec3 rgb = hsb2rgb(vec3(
+            pow(distance * 0.01, abs(tan(u_time))),
+            0.9,
+            0.9-distance*0.001));
+        
+          gl_FragColor = vec4(rgb, 1.0);
+        }"
+        width="1000" height="800"></canvas></li>
+
+
+        <li><canvas class = "glslCanvas" data-fragment = "#ifdef GL_ES
+          precision mediump float;
+          #endif
+          
+          #define PI 3.14159265359
+          
+          uniform vec2 u_resolution;
+          uniform vec2 u_mouse;
+          uniform float u_time; 
+          
+          void main() {
+          
+              vec2 nc = gl_FragCoord.xy/u_resolution;
+          
+              vec3 baseColor = vec3(0.9882, 0.0, 0.0);
+              vec3 blueStripe = vec3(0.0, 0.0, 1.0);
+              vec3 whiteStripe = vec3(1.0);
+          
+              float whiteHorizontal = step(0.6, nc.y) - step(0.75, nc.y);
+              float blueHorizontal = step(0.63, nc.y) - step(0.72, nc.y);
+          
+              float whiteVertical = step(0.4, nc.x) - step(0.6, nc.x);
+              float blueVertical = step(0.44, nc.x) - step(0.56, nc.x);
+              
+              //Animation transition beetween colors
+              baseColor = mix(baseColor, blueStripe, sin(u_time));
+              
+              baseColor = mix(baseColor, whiteStripe, whiteHorizontal);
+              baseColor = mix(baseColor, whiteStripe, whiteVertical);
+              
+              //Animation transition between colors
+              blueStripe = mix(blueStripe, vec3(1.0, 0.0, 0.0), sin(u_time));
+          
+              baseColor = mix(baseColor, blueStripe, blueHorizontal);
+              baseColor = mix(baseColor, blueStripe, blueVertical);
+              //OBS-Note: Basecolor here in the end is a composiiton of different colors, not just one, one for each pixel though.
+              
+              /*
+              Hmmmmmmmmmmmmm? Code below not really woeking at not blending the
+              baseColor = (1.0 - blueHorizontal) * (1.0 - blueVertical) * (1.0 - whiteHorizontal) * (1.0 - whiteVertical) * baseColor +
+              whiteHorizontal * whiteStripe + 
+              whiteVertical * whiteStripe +
+              blueHorizontal * blueStripe +
+              blueVertical * blueStripe;
+              */
+              gl_FragColor = vec4(baseColor, 1.0);
+          
+          
+          }"
+          width="1000" height="800"></canvas></li>
+
+      </ul>
+
+      <footer>
+        <!-- the target=_blank makes it so that when Github logo is clicked a new tab opens up which goes to it -->
+        <a href="https://github.com/Mermersk" target="_blank"><img src="GitHub_Logo.png" width="125" height="50" title="My Github"></img></a>
+        <p style="padding-left: 7px"><b>Isak Steingrimsson</b></p>
+        
+      </footer>
     </body>
-
-
-
-    <script src="script.js"></script>
     
+
+    <script type="text/javascript" src="glslCanvas/lib/GlslCanvas.js"></script>
+    <script type="text/javascript" src = "script.js"></script>
 </html>

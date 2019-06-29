@@ -2,7 +2,19 @@
 <html>
   <!-- HTML comments are defined like this! -->
     <head>
-        <title></title>
+
+      <!-- Global site tag (gtag.js) - Google Analytics -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=UA-143031067-1"></script>
+      <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-143031067-1');
+      </script>
+
+
+        <title>Mermersk Shaders</title>
 
         <style>
         /* CSS comments are defined like this! 
@@ -250,6 +262,51 @@
           
           
           }"
+          width="1000" height="800"></canvas></li>
+
+          <li><canvas class="glslCanvas" data-fragment="#ifdef GL_ES
+            precision mediump float;
+            #endif
+            
+            #define PI 3.14159265359
+            
+            uniform vec2 u_resolution;
+            uniform vec2 u_mouse;
+            uniform float u_time;
+            
+            float sinc( float x, float k ){
+              float a = 3.1459265359 * k * x - 1.0;
+              
+              return sin(a)/a;
+            }
+            
+            float testf(float coords, float time) {
+            
+              float outputs = coords * time;
+              return sin(outputs)/outputs - 0.5; 
+            
+            }
+            
+            void main() {
+              
+            
+              vec2 nc = gl_FragCoord.xy/u_resolution;
+            
+              float slowTime = u_time/10.0;
+            
+              float wave = nc.x * cos(u_time); 
+              float ss = testf(nc.x, sin(u_time));
+            
+              float testWave = nc.x - sin(u_time)-0.5;
+              testWave = sin(testWave)/testWave-0.4;
+            
+              float lineUp = smoothstep(nc.y + 0.005, nc.y, testWave);
+              float lineDown = smoothstep(nc.y - 0.005, nc.y, testWave);
+              vec3 finalColor = lineUp * vec3(0.0824, 0.8863, 0.2824) + lineDown * vec3(0.2118, 0.051, 0.9216);
+            
+              gl_FragColor = vec4(finalColor, 1.0);
+               
+            }" 
           width="1000" height="800"></canvas></li>
 
       </ul>

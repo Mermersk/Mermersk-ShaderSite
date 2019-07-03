@@ -1,4 +1,4 @@
-
+<!DOCTYPE html>
 <html>
   <!-- HTML comments are defined like this! -->
     <head>
@@ -309,6 +309,40 @@
             }" 
           width="1000" height="800"></canvas></li>
 
+          <li><canvas class="glslCanvas" data-fragment="#ifdef GL_ES
+            precision mediump float;
+            #endif
+            
+            #define PI 3.14159265359
+            
+            uniform vec2 u_resolution;
+            uniform vec2 u_mouse;
+            uniform float u_time;
+            
+            
+            void main() {
+              
+            
+              vec2 nc = gl_FragCoord.xy/u_resolution;
+              //Centers the image, eg: makes 0.0 be in the middle.
+              nc = nc / vec2(0.5);
+              float slowTime = u_time/10.0;
+            
+              nc.x = nc.x - u_time;
+              float testWave = nc.x;// - sin(u_time)-1.0;
+              testWave = sin(testWave)/10.0;
+            
+              nc.y = nc.y - 1.0;
+              float lineDown = smoothstep(nc.y - 0.05, nc.y, testWave) - smoothstep(nc.y, nc.y + 0.05, testWave);
+            
+              vec4 finalColor = vec4(1.0, 1.0, 1.0, 0.0);
+              finalColor = mix(finalColor, vec4(0.2118, 0.051, 0.9216, testWave*20.0), lineDown);
+            
+              gl_FragColor = finalColor;
+               
+            }" 
+          width="1000" height="800"></canvas></li>
+
       </ul>
 
       <footer>
@@ -320,6 +354,6 @@
     </body>
     
 
-    <script type="text/javascript" src="glslCanvas/lib/GlslCanvas.js"></script>
+    <script src="glslCanvas/lib/GlslCanvas.js"></script>
     <script type="text/javascript" src = "script.js"></script>
 </html>

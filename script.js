@@ -5,6 +5,10 @@ canvas.height = 800;
 canvas.width = 600;
 //document.body.appendChild(canvas);
 
+//const cc = window.GlslCanvas.canvas;
+//cc.width = 20;
+//cc.height = document.height;
+
 //Part of the GlslCanvas library
 var sandbox = new GlslCanvas(canvas);
 

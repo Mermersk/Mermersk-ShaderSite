@@ -3,6 +3,26 @@
 var canvas = document.createElement("canvas");
 canvas.height = 800;
 canvas.width = 600;
+
+const shaderCanvas = document.getElementsByClassName("glslCanvas");
+console.log(typeof(shaderCanvas));
+console.log(shaderCanvas);
+console.log(shaderCanvas[2].width);
+console.log(window.outerWidth);
+console.log(window.screen.width);
+
+/*
+//Resizes canvas dynamically if the browser detects a change in the windows widht and height
+//Wont be using it here for my shader site, but useful for later.
+
+function resizeCanvas() {
+  shaderCanvas[0].width = window.innerWidth;
+  shaderCanvas[0].height = window.innerHeight;
+}
+window.addEventListener("resize", resizeCanvas);
+
+/*
+
 //document.body.appendChild(canvas);
 
 //const cc = window.GlslCanvas.canvas;
@@ -104,3 +124,5 @@ function draw() {
 init();
 
 */
+
+

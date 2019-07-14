@@ -1,4 +1,89 @@
 
+//An array named "shaders" from the js file shaderStrings has been loaded in with an html script tag.
+//It contains source code for all the shaders.
+let canvas = document.createElement("canvas");
+canvas.width = 1000;
+canvas.height = 800;
+
+//Create new instance of GlslCanvas module and link it to our canvas.
+let sandbox = new GlslCanvas(canvas);
+sandbox.load(shaders[0]);
+
+//Append our glslCanvas to html, programmitacally created
+document.body.appendChild(canvas);
+
+//Starts at 1 since the first shader[0] is already loaded.
+let shaderIndex = 0;
+
+//Creating a counter showing on number what shader you are on and how many are in total
+let sInfo = document.createElement("h5");
+sInfo = shaders.length;
+document.body.append(sInfo);
+
+
+
+function changeShader() {
+
+  if (event.code == "ArrowRight" && shaderIndex < shaders.length - 1) {
+
+    shaderIndex += 1;
+    sandbox.load(shaders[shaderIndex]);
+    console.log("ArrowRight pressed");
+    console.log(shaderIndex);
+    
+  }
+
+  if (event.code == "ArrowLeft" && shaderIndex > 0) {
+
+    shaderIndex -= 1;
+    sandbox.load(shaders[shaderIndex]);
+    console.log("ArrowLeft pressed");
+    console.log(shaderIndex);
+    
+  }
+}
+
+//Adding eventlistener for detecting a keypress.
+//The first parameter: is an string for a specified event. See all events possible here: https://developer.mozilla.org/en-US/docs/Web/Events
+document.addEventListener("keyup", changeShader);
+
+
+
+
+/*
+let canvas = document.createElement("canvas");
+let sandbox = new GlslCanvas(canvas);
+
+let ss = window.glslCanvases;
+
+console.log(ss);
+
+console.log(sandbox);
+console.log(typeof(sandbox));
+
+console.log(sandbox.fragmentString);
+
+//Returns a list of all elements with the name "glslCanvas"
+let shaderCanvases = document.getElementsByClassName("glslCanvas");
+//Initiating array of the data-fragment attribute.
+let shaderStringAttributes = [];
+//Populating array with the data-fragment attributes values.
+for (i = 0; i < shaderCanvases.length; i++) {
+  shaderStringAttributes.push(shaderCanvases[i].attributes[1]);
+}
+
+//const string_frag_code = "main(){\ngl_FragColor = vec4(1.0);\n}\n";
+
+//setAttributes method updates an nodes attribute value. params: (attribute name, new value) 
+//shaderCanvases[2].setAttribute("data-fragment", string_frag_code);
+//console.log(shaderStringAttributes[2]);
+
+*/
+
+//let d = new Date();
+//console.log(d.getSeconds());
+
+/*
 //Code here creates a canvas and adds it to the html via javascript
 var canvas = document.createElement("canvas");
 canvas.height = 800;
@@ -10,6 +95,8 @@ console.log(shaderCanvas);
 console.log(shaderCanvas[2].width);
 console.log(window.outerWidth);
 console.log(window.screen.width);
+
+*/
 
 /*
 //Resizes canvas dynamically if the browser detects a change in the windows widht and height

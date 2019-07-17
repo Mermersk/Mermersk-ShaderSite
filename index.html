@@ -56,20 +56,57 @@
 
         @keyframes jumpingLogo {
           from {
-            padding-bottom: 0px;
+            margin-bottom: 0px;
           }
           to {
-            padding-bottom: 15px;
+            margin-bottom: 7px;
           }
         }
 
         body {background-color:cornsilk;
-          max-width: 1050px;
+          
+        }
+        
+        /* We only have one div so far */
+        
+        div {
+          margin-top: 30px;
           margin: auto;
-          }
+          /*max-width: By default a div element will take up all the width available on the viewport. 
+            By constraining the width of the div to be the width of shadercanvas + the 2 arrows, and by putting
+            margin to auto we can ensure that the margin on both sides will be equaly big when resizing!
+          
+            By setting min-width we can ensure that when the viewport width becomes smaller than 1180px,
+            the div will not start to put the arrows above and below the shadercanvas(since there is no longer space for it all) and
+            therefore completely ruining the look of the site. The div then remains this width and it goes
+            out of sight if user keeps pushing the width smaller than 1180 px.
+          */
+          max-width: 1180px;
+          min-width: 1180px;
 
+        }
+
+        #shaderCountInfo {
+          margin-top: 30px;
+          margin-right: 15px;
+          margin-bottom: 30px;
+          /* min-width here the same as the canvas so that it follows it precisely */
+          min-width: 1180px;
+          color: black;
+          font-size: 400%; 
+          text-align: center; 
+          font-family: Impact;
+          word-spacing: 10px;
+
+          border-bottom: dashed;
+          border-bottom-color:darkgrey;
+          border-bottom-width: 5px;
+        }
+        
         h1 {margin-top: 30px;
-          margin-right: 100px;
+          margin-right: 20px;
+          /* min-width here the same as the canvas so that it follows it precisely */
+          min-width: 1180px;
           color: black;
           font-size: 400%; 
           text-align: center; 
@@ -102,15 +139,43 @@
           animation-fill-mode: backwards;
       
         }
+        
+        #keyInfoRight {
+          /*
+          float: right: Means that this element will float to the right of the element above its, which is the shader canvas.
+          display: inline-block makes it so that the canvas-element keyInfoRight can be beside the shadercanvas, but not underneath it.
 
-        canvas {margin-top: 30px;
+          OBS: increasing padding will increase the "click" zone with the padding, but margin will not!
+          I increase padding on these button so that the click zone is extended down to the bottom of the shadercanvas.
+          Makes it easier for mobile users to click.
+          */
+          display: inline-block;
+          padding-bottom: 350px;
+          padding-left: 40px;
+          
         }
 
-        footer {
-          position: fixed;
-          bottom: 5px;
-          left: 5px;
+        #keyInfoRight:hover {
 
+          color: darkgreen;
+        }
+
+        #keyInfoLeft {
+          /*
+          float: right: Means that this element will float to the right of the element above its, which is the shader canvas.
+          display: inline-block makes it so that the canvas-element keyInfoRight can be beside the shadercanvas, but not underneath it.
+          */
+          display: inline-block;
+          padding-bottom: 350px;
+          padding-right: 40px;
+          
+        }
+        
+        footer {
+          /*Width simply defins the width of the whole element*/
+          width: 140px;
+          margin: auto;
+        
           border-bottom: ridge;
           border-bottom-left-radius: 20px;
           border-bottom-right-radius: 20px;
@@ -136,7 +201,7 @@
 
       <h1>Some <span id="middleWord">random</span> shaders<span id="obs">!</span></h1>
 
-        
+      
       <footer>
         <!-- the target=_blank makes it so that when Github logo is clicked a new tab opens up which goes to it -->
         <a href="https://github.com/Mermersk" target="_blank"><img src="GitHub_Logo.png" width="125" height="50" title="My Github"></img></a>

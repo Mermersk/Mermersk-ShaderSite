@@ -9,207 +9,149 @@ canvas.height = 800;
 let sandbox = new GlslCanvas(canvas);
 sandbox.load(shaders[0]);
 
-//Append our glslCanvas to html, programmitacally created
-document.body.appendChild(canvas);
+//console.log(glslCanvases[0]);
+//sandbox.resume();
+// So that I can make arrow-canvases a child of a element i put the 3 canvas inside this div
+const canvasDiv = document.createElement("div");
+canvasDiv.id = "SCanvas";
 
+//Keyboard informational
+let keyboardCanvasRight = document.createElement("canvas");
+keyboardCanvasRight.width = 50;
+keyboardCanvasRight.height = 75;
+keyboardCanvasRight.id = "keyInfoRight";
+keyboardCanvasRight.title = "You can use arrow keys aswell!"
+
+//Creating a drawing object on our canvas
+const ctxRight = keyboardCanvasRight.getContext("2d");
+ctxRight.fillStyle = "DarkSlateGrey";
+ctxRight.moveTo(5, 5);
+ctxRight.lineTo(50, keyboardCanvasRight.height/2);
+ctxRight.lineTo(5, 70);
+//stroke is used to actually draw or line. It will just draw the lines, so it will be an outline drawing
+//ctx.stroke();
+//Fill is similiar to stroke except that it will fill the drawn area with the color deined in ctx.fillstyle
+ctxRight.fill();
+
+let keyboardCanvasLeft = document.createElement("canvas");
+keyboardCanvasLeft.width = 50;
+keyboardCanvasLeft.height = 75;
+keyboardCanvasLeft.id = "keyInfoLeft";
+keyboardCanvasLeft.title = "You can use arrow keys aswell!"
+
+const ctxLeft = keyboardCanvasLeft.getContext("2d");
+ctxLeft.fillStyle = "DarkSlateGrey";
+ctxLeft.moveTo(45, 5);
+ctxLeft.lineTo(5, keyboardCanvasLeft.height/2);
+ctxLeft.lineTo(45, 70);
+ctxLeft.fill();
+
+/*
+  Animating with JS so that when mouse is over canvas, then change color. onmouseout is when not hovering, while onmouseover is hovering.
+  Cant do it in CSS sinxe i am drawing the arrow onto canvas with canvas drawing tools. I use onmouseout to set it back to the
+  initial color so that the OlivrDrab color doesnt get stuck on there once user hovers once over the canvas.
+
+  OBS: This is the same as doing:
+  keyboardCanvasRight.addEventListener("mouseover", function); Like I did with other elements.
+  Its just another way of adding a function to an eventlistener. In the other cases I named my function "changeShader", while
+  the function here is just directly passed in without a name.
+*/
+keyboardCanvasRight.onmouseout = function() {
+
+  ctxRight.fillStyle = "DarkSlateGrey";
+  ctxRight.fill();
+
+};
+
+keyboardCanvasRight.onmouseover = function() {
+  
+  ctxRight.fillStyle = "OliveDrab";
+  ctxRight.fill();
+
+};
+
+keyboardCanvasLeft.onmouseout = function() {
+
+  ctxLeft.fillStyle = "DarkSlateGrey";
+  ctxLeft.fill();
+
+};
+
+keyboardCanvasLeft.onmouseover = function() {
+  
+  ctxLeft.fillStyle = "OliveDrab";
+  ctxLeft.fill();
+
+};
+
+//appending our 3 canvases to be childen of canvasDiv
+canvasDiv.appendChild(keyboardCanvasLeft);
+canvasDiv.appendChild(canvas);
+canvasDiv.appendChild(keyboardCanvasRight);
+
+//Returns an HTMLCollection consisiting of 1 element, our footer.
+const footer = document.getElementsByTagName("footer");
+//console.log(footer[0]);
+/*
+Appending our canvasDiv to the body of the html document. I could use appendChild() here
+but then the footer would be before all our canvases in the document, which we dont want.
+insertBefore does the same as appendChild only that it specifies where we should appens it.
+In this case we want to append our canvases before the footer.
+*/
+document.body.insertBefore(canvasDiv, footer[0]);
+//console.log(canvasDiv.parentElement);
 //Starts at 1 since the first shader[0] is already loaded.
 let shaderIndex = 0;
 
-//Creating a counter showing on number what shader you are on and how many are in total
-let sInfo = document.createElement("h5");
-sInfo = shaders.length;
-document.body.append(sInfo);
-
+//Creating a counter showing on number what shader you are on and how many are in total.
+//Using template string to achieve this. with the ${variable} its easy to insert a variable value.
+//innerText attribute is the actual text content of the <p> tag.
+let shaderCountInfo = document.createElement("p");
+shaderCountInfo.id = "shaderCountInfo";
+shaderCountInfo.innerText = `${shaderIndex + 1} / ${shaders.length}`;
+//appending to be child of the canvasDiv div.
+document.body.insertBefore(shaderCountInfo, footer[0]);
 
 
 function changeShader() {
-
-  if (event.code == "ArrowRight" && shaderIndex < shaders.length - 1) {
-
+  //event.target tells us where the click came from, we want it to run if it came from keyboardCanvasRight element
+  if ((event.code === "ArrowRight" || event.target === keyboardCanvasRight) && shaderIndex < shaders.length - 1) {
+    /*
+    Found out that somehow GlslCanvas library is running all shaders in shaders array at once!
+    This we dont want to happen because of perfromance(and some shaders have limited time of operation). There is no "refresh" function in the library
+    so only way I found to fix this is to use the destroy function to clear out everything and then
+    assing sandbox to a brand new instance of the class, this way everything is refreshed and reloaded
+    when user changes shader.
+    */
+    sandbox.destroy();
+    sandbox = new GlslCanvas(canvas);
     shaderIndex += 1;
     sandbox.load(shaders[shaderIndex]);
-    console.log("ArrowRight pressed");
-    console.log(shaderIndex);
-    
+    //console.log("ArrowRight pressed");
+    //console.log(shaderIndex);
+    //Updating shaderCountInfo to reflect the new reality when shader is changed.
+    shaderCountInfo.innerText = `${shaderIndex + 1} / ${shaders.length}`;
   }
 
-  if (event.code == "ArrowLeft" && shaderIndex > 0) {
+  if ((event.code === "ArrowLeft" || event.target === keyboardCanvasLeft) && shaderIndex > 0) {
+    sandbox.destroy();
+    sandbox = new GlslCanvas(canvas);
 
     shaderIndex -= 1;
     sandbox.load(shaders[shaderIndex]);
-    console.log("ArrowLeft pressed");
-    console.log(shaderIndex);
+    //console.log("ArrowLeft pressed");
+    //console.log(shaderIndex);
+
+    shaderCountInfo.innerText = `${shaderIndex + 1} / ${shaders.length}`;
     
   }
+
+  //console.log(event.target);
 }
 
 //Adding eventlistener for detecting a keypress.
 //The first parameter: is an string for a specified event. See all events possible here: https://developer.mozilla.org/en-US/docs/Web/Events
 document.addEventListener("keyup", changeShader);
-
-
-
-
-/*
-let canvas = document.createElement("canvas");
-let sandbox = new GlslCanvas(canvas);
-
-let ss = window.glslCanvases;
-
-console.log(ss);
-
-console.log(sandbox);
-console.log(typeof(sandbox));
-
-console.log(sandbox.fragmentString);
-
-//Returns a list of all elements with the name "glslCanvas"
-let shaderCanvases = document.getElementsByClassName("glslCanvas");
-//Initiating array of the data-fragment attribute.
-let shaderStringAttributes = [];
-//Populating array with the data-fragment attributes values.
-for (i = 0; i < shaderCanvases.length; i++) {
-  shaderStringAttributes.push(shaderCanvases[i].attributes[1]);
-}
-
-//const string_frag_code = "main(){\ngl_FragColor = vec4(1.0);\n}\n";
-
-//setAttributes method updates an nodes attribute value. params: (attribute name, new value) 
-//shaderCanvases[2].setAttribute("data-fragment", string_frag_code);
-//console.log(shaderStringAttributes[2]);
-
-*/
-
-//let d = new Date();
-//console.log(d.getSeconds());
-
-/*
-//Code here creates a canvas and adds it to the html via javascript
-var canvas = document.createElement("canvas");
-canvas.height = 800;
-canvas.width = 600;
-
-const shaderCanvas = document.getElementsByClassName("glslCanvas");
-console.log(typeof(shaderCanvas));
-console.log(shaderCanvas);
-console.log(shaderCanvas[2].width);
-console.log(window.outerWidth);
-console.log(window.screen.width);
-
-*/
-
-/*
-//Resizes canvas dynamically if the browser detects a change in the windows widht and height
-//Wont be using it here for my shader site, but useful for later.
-
-function resizeCanvas() {
-  shaderCanvas[0].width = window.innerWidth;
-  shaderCanvas[0].height = window.innerHeight;
-}
-window.addEventListener("resize", resizeCanvas);
-
-/*
-
-//document.body.appendChild(canvas);
-
-//const cc = window.GlslCanvas.canvas;
-//cc.width = 20;
-//cc.height = document.height;
-
-//Part of the GlslCanvas library
-var sandbox = new GlslCanvas(canvas);
-
-
-var string_frag_code = `#ifdef GL_ES
-precision mediump float;
-#endif
-
-#define PI 3.14159265359
-
-uniform vec2 u_resolution;
-uniform vec2 u_mouse;
-uniform float u_time; 
-
-void main() {
-
-    vec2 nc = gl_FragCoord.xy/u_resolution;
-    float c = pow(min(cos(PI * nc.x / 2.0), 1.0 - abs(nc.x)), 0.5);
-    //c = c + sin(u_time);
-    c = clamp(c, abs(sin(u_time)), abs(cos(u_time)));
-    float line = smoothstep(nc.y - 0.02, nc.y, c) - 
-    smoothstep(nc.y, nc.y + 0.02, c);
-    
-    vec3 green = vec3(0.302, 0.9216, 0.3529);
-    vec3 red = vec3(0.9, 0.0, 0.0);
-
-    //Old, Whole line is just one color, no changes
-    //vec3 color = line * vec3(0.302, 0.9216, 0.3529);
-
-    //Old, whole line changes color equally along every pixel
-    //vec3 color = line * mix(green, red, abs(tan(u_time)));
-
-    //New with smoothstep so tthat color changes in an gradient way
-    vec3 color = line * mix(green, red, smoothstep(0.0, abs(tan(u_time)), nc.x));
-
-    gl_FragColor = vec4(color, 1.0);
-}`;
-
-//Load the shader into our GlslCanvas
-sandbox.load(string_frag_code);
-
-
-
-/*
-
-var sun = new Image();
-var moon = new Image();
-var earth = new Image();
-function init() {
-  sun.src = 'https://mdn.mozillademos.org/files/1456/Canvas_sun.png';
-  moon.src = 'https://mdn.mozillademos.org/files/1443/Canvas_moon.png';
-  earth.src = 'https://mdn.mozillademos.org/files/1429/Canvas_earth.png';
-  window.requestAnimationFrame(draw);
-}
-
-var ctx = document.getElementById('tutorial').getContext('2d');
-
-function draw() {
-
-  ctx.globalCompositeOperation = 'destination-over';
-  ctx.clearRect(0, 0, 300, 300); // clear canvas
-
-  ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
-  ctx.strokeStyle = 'rgba(0, 153, 255, 0.4)';
-  ctx.save();
-  ctx.translate(150, 150);
-
-  // Earth
-  var time = new Date();
-  ctx.rotate(((2 * Math.PI) / 60) * time.getSeconds() + ((2 * Math.PI) / 60000) * time.getMilliseconds());
-  ctx.translate(105, 0);
-  ctx.fillRect(0, -12, 40, 24); // Shadow
-  ctx.drawImage(earth, -12, -12);
-
-  // Moon
-  ctx.save();
-  ctx.rotate(((2 * Math.PI) / 6) * time.getSeconds() + ((2 * Math.PI) / 6000) * time.getMilliseconds());
-  ctx.translate(0, 28.5);
-  ctx.drawImage(moon, -3.5, -3.5);
-  ctx.restore();
-
-  ctx.restore();
-  
-  ctx.beginPath();
-  ctx.arc(150, 150, 105, 0, Math.PI * 2, false); // Earth orbit
-  ctx.stroke();
- 
-  ctx.drawImage(sun, 0, 0, 300, 300);
-
-  window.requestAnimationFrame(draw);
-}
-
-init();
-
-*/
-
+keyboardCanvasLeft.addEventListener("click", changeShader);
+keyboardCanvasRight.addEventListener("click", changeShader);
 

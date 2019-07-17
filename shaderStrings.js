@@ -162,7 +162,7 @@ void main() {
     //float oBox2 = makeOutlineBox(nc, 0.1, 0.01);
 
     float inc = 0.0;
-    const int maximum = 200;
+    const int maximum = 40;
     //inc += 0.1;
 
     vec3 colorInHSb = vec3(0.47, 1.0, 1.0);

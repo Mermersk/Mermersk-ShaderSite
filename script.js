@@ -12,6 +12,10 @@ sandbox.load(shaders[0]);
 //console.log(glslCanvases[0]);
 //sandbox.resume();
 // So that I can make arrow-canvases a child of a element i put the 3 canvas inside this div
+//JSDoc doc of an variable:
+/**@description A div tag contaaining all canvases on the page
+ * @type {object}. An <div> tag.
+ */
 const canvasDiv = document.createElement("div");
 canvasDiv.id = "SCanvas";
 
@@ -112,7 +116,11 @@ shaderCountInfo.innerText = `${shaderIndex + 1} / ${shaders.length}`;
 //appending to be child of the canvasDiv div.
 document.body.insertBefore(shaderCountInfo, footer[0]);
 
+//JSDoc syntax, this one simply describes the function
 
+/** @description Main goal here is to either increase or decrease the global variable shaderIndex in order to change the current shader.
+ * This is achieved by either pressing arrowRight-arrowLeft on the keboard or by clicking on canvases that represent arrows.
+ */
 function changeShader() {
   //event.target tells us where the click came from, we want it to run if it came from keyboardCanvasRight element
   if ((event.code === "ArrowRight" || event.target === keyboardCanvasRight) && shaderIndex < shaders.length - 1) {

@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html>
-  <!-- HTML comments are defined like this! -->
     <head>
+      <!--Firefox gave me an warning/error that the charset was not defined, so that is done in this meta tag-->
+      <meta charset="UTF-8">
 
+  
       <!-- Global site tag (gtag.js) - Google Analytics -->
       <script async src="https://www.googletagmanager.com/gtag/js?id=UA-143031067-1"></script>
       <script>
@@ -208,11 +210,11 @@
         <p style="padding-left: 7px"><b>Isak Steingrimsson</b></p>
         
       </footer>
+
+      <script src="glslCanvas/lib/GlslCanvas.js"></script>
+      <!-- Have to load in shaderStrings before script since the list in shaderStrings is uses in script.js -->
+      <script type="text/javascript" src = "shaderStrings.js"></script>
+      <script type="text/javascript" src = "script.js"></script>
     </body>
     
-
-    <script src="glslCanvas/lib/GlslCanvas.js"></script>
-    <!-- Have to load in shaderStrings before script since the list in shaderStrings is uses in script.js -->
-    <script type="text/javascript" src = "shaderStrings.js"></script>
-    <script type="text/javascript" src = "script.js"></script>
 </html>

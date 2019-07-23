@@ -4,7 +4,11 @@
       <!--Firefox gave me an warning/error that the charset was not defined, so that is done in this meta tag-->
       <meta charset="UTF-8">
 
-      <!--viewport metatag here should help the site scale/be more responsive for mobile users-->
+      <!--viewport metatag here should help the site scale/be more responsive for mobile users
+      YES. <meta name="viewport" content="width=device-width, initial-scale=1.0"> should be on every webpage, regardless of what framework you're using.
+      The viewport META tag allows device width to map to the width CSS property, which essentially means that device pixels correctly map to CSS pixels,
+      allowing elements and fonts to correctly scale on mobile devices. Without this, a pixel is not a pixel in the traditional sense.
+      -->
       <meta name = "viewport" content = "width=device-width, initial-scale=1.0">
       <meta name = "author" content = "Isak Steingrimsson">
       <meta name = "description" content = "Isak Steingrimsson shader showcase site">

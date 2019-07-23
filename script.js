@@ -2,8 +2,8 @@
 //An array named "shaders" from the js file shaderStrings has been loaded in with an html script tag.
 //It contains source code for all the shaders.
 let canvas = document.createElement("canvas");
-canvas.width = 1000;
-canvas.height = 800;
+canvas.width = 1000;// window.innerWidth/3;
+canvas.height = 800;// window.innerHeight/2;
 
 //Create new instance of GlslCanvas module and link it to our canvas.
 let sandbox = new GlslCanvas(canvas);

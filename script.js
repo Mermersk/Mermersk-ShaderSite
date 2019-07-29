@@ -2,8 +2,28 @@
 //An array named "shaders" from the js file shaderStrings has been loaded in with an html script tag.
 //It contains source code for all the shaders.
 let canvas = document.createElement("canvas");
-canvas.width = 1000;// window.innerWidth/3;
-canvas.height = 800;// window.innerHeight/2;
+//console.log(window.innerWidth);
+//console.log(window.devicePixelRatio);
+//console.log( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
+//My laptop was set to dpi of 125%(1.25) therefore the canvas size got all messed up
+if (window.innerWidth < 1000 || window.devicePixelRatio > 1.26) {
+  canvas.style.width = "750px";
+  canvas.style.height = "550px";
+  canvas.style.marginLeft = "10px";
+  
+} else {
+  canvas.style.width = "1000px";
+  canvas.style.height = "800px";
+}
+
+
+/*Putting the size of cnavas into the css instead of directl(canvas.width = 1000)
+Seems to jave fixed alot. Fixet atleast the 125% scaling on my laptop.
+The html-canvas-width&height seem to follow the CSS units. But those units dictate the clipspace coords rendering res inside canvas,
+while CSS will always display the canvas in 1000x800 no matter what. So the CSS units is more the rendering res in the whole document, outside of the canvas */
+//canvas.style.width = "1000px";
+//canvas.style.height = "800px";
+
 
 //Create new instance of GlslCanvas module and link it to our canvas.
 let sandbox = new GlslCanvas(canvas);
